@@ -28,7 +28,9 @@
     <body class="{% block body_class %}{% endblock %}">
         {% wagtailuserbar %}
 
-        {% block content %}{% endblock %}
+        {% block content %}
+        
+        {% endblock %}
 
         {# Global javascript #}
         <script type="text/javascript" src="{% static 'js/online_shop.js' %}"></script>

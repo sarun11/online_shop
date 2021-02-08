@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block content %}
+
+    <h1>{{page.title}}</h1>
+
+    
+    <p>
+        {{page.description | richtext}}
+    </p>
+
+    {% image page.image fill-640x480 %}
+
+    <p>
+        {{page.inStock}}
+    </p>
+
+{% endblock %}

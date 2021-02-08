@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block content %}
+
+    <h1>{{page.title}}</h1>
+
+    <p>
+        SKU: {{page.sku}}
+    </p>
+
+    <p>
+        Category: {{page.category}}
+    </p>
+
+    <p>
+        NRs. {{page.Price}}
+    </p>
+    
+
+    <p>
+        {{page.description | richtext}}
+    </p>
+
+    {% image page.image fill-640x480 %}
+
+    <p>
+        {% if page.inStock %}
+            In Stock
+        {% else %}
+            Out Of Stock
+        {% endif %}
+    </p>
+
+{% endblock %}

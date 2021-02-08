@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block content %}
+
+    <h1>{{ page.title| safe }}</h1>
+
+    <h3>{{page.intro | richtext }}</h3>
+
+    {% if page.products.count %}
+        <h2>Products</h2>
+
+        <div>
+            {% for product in page.products.all %}
+                <div>
+                    <img src ="{% product.image.url %}">
+
+                    <a href = "{% pageurl product %}">
+                        {{product }}
+                    </a>
+                    {{ product.price }}
+                </div>  
+            {% endfor %}
+        </div>
+
+    {% else %}
+        <p>
+            No products Available!
+        </p>
+
+    {% endif %}
+
+{% endblock content %}

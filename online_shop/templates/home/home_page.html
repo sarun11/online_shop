@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% load wagtailcore_tags %}
+
+{% block content %}
+
+    <h1>{{ page.title| safe }}</h1>
+
+    <h3>{{page.intro | richtext }}</h3>
+
+{% endblock content %}
