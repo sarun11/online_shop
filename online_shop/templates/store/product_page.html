@@ -4,7 +4,12 @@
 
 {% block content %}
 
-    <h1>{{page.title}}</h1>
+<h1>{{page.title}}</h1>
+    <picture>
+        {% image page.image width-400 as wide_photo %}
+        <source srcset="{{ wide_photo.url }}" media="(min-width: 400px)">
+        {% image page.image width-400 class="float-left mr-2" %}
+    </picture>
 
     <p>
         SKU: {{page.sku}}
@@ -23,7 +28,8 @@
         {{page.description | richtext}}
     </p>
 
-    {% image page.image fill-640x480 %}
+    
+    <!-- {% image page.image fill-640x480 %} -->
 
     <p>
         {% if page.inStock %}

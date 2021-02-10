@@ -7,18 +7,34 @@
 
     <h3>{{page.intro | richtext }}</h3>
 
-    {% if page.products.count %}
+    {% if products.count %}
         <h2>Products</h2>
 
         <div>
-            {% for product in page.products.all %}
-                <div>
-                    <img src ="{% product.image.url %}">
+            {% for product in products.all %}
+                <div class = "card mb-2">
+                    
+                    <div class="card-body">
 
-                    <a href = "{% pageurl product %}">
-                        {{product }}
-                    </a>
-                    {{ product.price }}
+                        <a href = "{% pageurl product %}">
+                            <picture>
+                                {% image product.image width-400 as wide_photo %}
+                                <source srcset="{{ wide_photo.url }}" media="(min-width: 400px)">
+                                {% image product.image width-400 class="float-left mr-2" %}
+                            </picture>
+
+                            <!-- {% image product.image fill-80x80 %} -->
+                        </a>
+
+
+                        <h3>
+                            <a href = "{% pageurl product %}">
+                                {{product }}
+                            </a>
+                        </h3>       
+                        <br>
+                        Nrs. {{ product.specific.price }}
+                    </div>
                 </div>  
             {% endfor %}
         </div>

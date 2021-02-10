@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'store',
 
     'wagtail.contrib.forms',
+    'wagtail.contrib.modeladmin',
     'wagtail.contrib.redirects',
     'wagtail.embeds',
     'wagtail.sites',
