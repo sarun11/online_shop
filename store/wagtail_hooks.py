@@ -4,18 +4,9 @@ from wagtail.contrib.modeladmin.options import (
     modeladmin_register
 )
 
-from store.models import ProductCategory, Product
+from store.models import Product
 
 
-class CategoryModelAdmin(ModelAdmin):
-    model = ProductCategory
-    menu_icon = "list-ul"
-    menu_label = "Categories"
-    menu_order = 100    # 000 refers to first menu order and so on
-    list_per_page = 10
-    list_display = ("title",)
-    list_filter = ('title',)
-    search_fields = ('title', 'active')
 
 
 class ProductModelAdmin(ModelAdmin):
@@ -24,12 +15,11 @@ class ProductModelAdmin(ModelAdmin):
     menu_label = "Products"
     menu_order = 100    # 000 refers to first menu order and so on 
     list_per_page = 10
-    list_display = ("title", 'category', 'price')
-    list_filter = ('title', 'category', 'price')
-    search_fields = ('title', 'category', 'price', 'inStock')
+    list_display = ("title",'price')
+    list_filter = ('title', 'price')
+    search_fields = ('title', 'price', 'inStock')
     
     
-modeladmin_register(CategoryModelAdmin)
 modeladmin_register(ProductModelAdmin)
 
 

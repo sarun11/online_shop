@@ -1,13 +1,22 @@
 from django.db import models
-from wagtail.core.models import Page
+from wagtail.core.models import Page, Orderable
 from wagtail.core.fields import RichTextField
 from wagtail.admin.edit_handlers import (
     FieldPanel,
+    InlinePanel,
 )
+
+from wagtail.snippets.edit_handlers import SnippetChooserPanel
 
 from wagtail.images.edit_handlers import (
     ImageChooserPanel
 )
+
+from modelcluster.fields import (
+    ParentalKey,
+)
+
+from wagtail.snippets.models import register_snippet
 from cart.forms import CartAddProductForm
 
 # Create your models here.
@@ -23,7 +32,6 @@ class StoreIndexPage(Page):
     ]
     
     subpage_types = [
-        "store.CategoryIndexPage",
         "store.ProductIndexPage",
     ]
     
@@ -34,53 +42,16 @@ class StoreIndexPage(Page):
         context["products"] = Product.objects.all()  # later on, may be only featured products will be here
         return context
     
-      
-class CategoryIndexPage(Page):
-    
-    max_count = 1
-    
-    subpage_types = [
-        "store.ProductCategory",
-    ]
-
-
-class ProductCategory(Page):
-    
-    name = models.CharField(max_length=250)
-    
-    description = RichTextField(
-        null=True,
-        blank=True,
-        help_text="Description of the Category"
-    )
-    
-    image = models.ForeignKey(
-        "wagtailimages.Image", 
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="+")
-    
-    active = models.BooleanField(default=True)
-    
-    content_panels = Page.content_panels + [
-        FieldPanel('name'),
-        FieldPanel('description'),
-        ImageChooserPanel('image'),
-        FieldPanel('active')
-    ]
-      
-    class Meta:
-        verbose_name = "Category"
-        verbose_name_plural = "Categories"
-        
-
 class ProductIndexPage(Page):
     
-    max_count = 1
+    # max_count = 1
+    
+    parent_page_types = [
+        "store.StoreIndexPage"
+    ]
     
     subpage_types = [
-        "store.Product",
+        "store.Book",    #Change this
     ]
     
 
@@ -88,11 +59,6 @@ class Product(Page):
     
     sku = models.IntegerField(null=True)
     name = models.CharField(max_length=250)
-    
-    category = models.ForeignKey(
-        "store.ProductCategory", 
-        on_delete=models.PROTECT,
-        related_name="products")
     
     image = models.ForeignKey(
         "wagtailimages.Image", 
@@ -103,8 +69,8 @@ class Product(Page):
     
     description = RichTextField(blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    brand = models.CharField(null=True, max_length=50)
-    # mrp = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    brand = models.CharField(null=True, max_length=50)  # This will be a Snippet (foreign key)
+    # mrp = models.DecimalField(max_digits=10, decimal_places=2, de fault=0)
     inStock = models.BooleanField(default=True)
     note = RichTextField(
         null=True,
@@ -118,7 +84,6 @@ class Product(Page):
     content_panels = Page.content_panels + [
         FieldPanel('sku'),
         FieldPanel('name'),
-        FieldPanel('category'),
         ImageChooserPanel('image'),
         FieldPanel('description'),
         FieldPanel('price'),
@@ -136,6 +101,63 @@ class Product(Page):
     class Meta:
         verbose_name = "Product"
         verbose_name_plural = "Products"
+    
+    subpage_types = []
+        
+
+class Book(Product):
+    
+    template = 'store/product.html'
+    
+    content_panels = Product.content_panels + [
+        InlinePanel(
+            "authors",
+            heading="Authors",
+            help_text="Select one or more authors"
+        ),
+    ]
+    
+    parent_page_types = [
+        "store.ProductIndexPage",
+    ]
+    
+    subpage_types = []
 
 
+class BookAuthor(Orderable, models.Model):
+    book = ParentalKey(
+        "store.Book",
+        null=True,
+        on_delete=models.CASCADE,
+        related_name="authors",
+    )
+    
+    author = models.ForeignKey(
+        "store.Person",
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name="books_authored"
+    )
+    
+    class Meta(Orderable.Meta):
+        verbose_name = "author"
+        verbose_name_plural = "authors"
+    
+    panels = [
+        SnippetChooserPanel("author")
+    ]
+    
+@register_snippet
+class Person(models.Model):
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
+    
+    
+    panels = [
+        FieldPanel('first_name'),
+        FieldPanel('last_name')
+    ]
+    
+    def __str__(self):
+        return " ".join([self.first_name, self.last_name])
 
