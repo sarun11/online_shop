@@ -20,7 +20,7 @@
     </p>
 
     <p>
-        NRs. {{page.Price}}
+        NRs. {{page.price}}
     </p>
     
 
@@ -38,5 +38,17 @@
             Out Of Stock
         {% endif %}
     </p>
+
+    <form action="{% url "cart:add" page.id%}" 
+        method="POST">
+
+            {{cart_add_product_form}}
+
+            {% csrf_token %}
+
+        <input type="submit" 
+        value="Add to Cart" 
+        class="btn btn-primary">
+    </form>
 
 {% endblock %}

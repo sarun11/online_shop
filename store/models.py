@@ -8,7 +8,7 @@ from wagtail.admin.edit_handlers import (
 from wagtail.images.edit_handlers import (
     ImageChooserPanel
 )
-
+from cart.forms import CartAddProductForm
 
 # Create your models here.
 
@@ -31,7 +31,7 @@ class StoreIndexPage(Page):
     
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request)
-        context["products"] = ProductPage.objects.all()  # later on, may be only featured products will be here
+        context["products"] = Product.objects.all()  # later on, may be only featured products will be here
         return context
     
       
@@ -40,11 +40,11 @@ class CategoryIndexPage(Page):
     max_count = 1
     
     subpage_types = [
-        "store.CategoryPage",
+        "store.ProductCategory",
     ]
 
 
-class CategoryPage(Page):
+class ProductCategory(Page):
     
     name = models.CharField(max_length=250)
     
@@ -80,17 +80,17 @@ class ProductIndexPage(Page):
     max_count = 1
     
     subpage_types = [
-        "store.ProductPage",
+        "store.Product",
     ]
     
 
-class ProductPage(Page):
+class Product(Page):
     
     sku = models.IntegerField(null=True)
     name = models.CharField(max_length=250)
     
     category = models.ForeignKey(
-        "store.CategoryPage", 
+        "store.ProductCategory", 
         on_delete=models.PROTECT,
         related_name="products")
     
@@ -127,6 +127,11 @@ class ProductPage(Page):
         FieldPanel('inStock'),
         FieldPanel('note')
     ]
+    
+    def get_context(self, request, *args, **kwargs):
+        context = super().get_context(request)
+        context["cart_add_product_form"] = CartAddProductForm  # later on, may be only featured products will be here
+        return context
     
     class Meta:
         verbose_name = "Product"

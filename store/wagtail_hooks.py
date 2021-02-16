@@ -4,11 +4,11 @@ from wagtail.contrib.modeladmin.options import (
     modeladmin_register
 )
 
-from store.models import CategoryPage, ProductPage
+from store.models import ProductCategory, Product
 
 
 class CategoryModelAdmin(ModelAdmin):
-    model = CategoryPage
+    model = ProductCategory
     menu_icon = "list-ul"
     menu_label = "Categories"
     menu_order = 100    # 000 refers to first menu order and so on
@@ -19,7 +19,7 @@ class CategoryModelAdmin(ModelAdmin):
 
 
 class ProductModelAdmin(ModelAdmin):
-    model = ProductPage
+    model = Product
     menu_icon = "list-ol"
     menu_label = "Products"
     menu_order = 100    # 000 refers to first menu order and so on 
@@ -31,6 +31,8 @@ class ProductModelAdmin(ModelAdmin):
     
 modeladmin_register(CategoryModelAdmin)
 modeladmin_register(ProductModelAdmin)
+
+
 
     
     
