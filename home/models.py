@@ -5,6 +5,8 @@ from wagtail.admin.edit_handlers import (
     FieldPanel
 )
 
+from store.models import ProductCategory, ProductSubCategory
+
 class HomePage(Page):
     intro = RichTextField(null=True, blank=True)
     
@@ -13,5 +15,14 @@ class HomePage(Page):
     ]
     
     subpage_types = [
-        "store.StoreIndexPage",
+        "store.ProductCategory",
     ]
+
+    def get_context(self, request, *args, **kwargs):
+        context = super().get_context(request)
+        # sub_categories = self.objects.descendant_of(ProductCategory) 
+        sub_categories = ProductSubCategory.objects.all()
+        context["sub_categories"] = sub_categories # later on, may be only featured products will be here
+        return context
+    
+    

@@ -1,10 +1,64 @@
 {% extends 'base.html' %}
-{% load wagtailcore_tags %}
+{% load wagtailcore_tags wagtailimages_tags%}
 
 {% block content %}
 
     <h1>{{ page.title| safe }}</h1>
 
     <h3>{{page.intro | richtext }}</h3>
+
+    <div>
+        {% for category in page.get_children %}
+
+            <div style="float:left">
+            
+                <a href="{% pageurl category %}">
+                    <picture>
+                        {% image category.specific.image width-400 as wide_photo %}
+                        <source srcset="{{ wide_photo.url }}" media="(min-width: 400px)">
+                        {% image category.specific.image width-400 class="float-left mr-2" %}
+                    </picture>
+                </a>
+                
+                <h2>
+                    <a href="{% pageurl category %}">
+                        {{ category.title }}
+                    </a>
+                </h2>
+
+            </div>
+            
+        {% endfor %}
+    </div>
+
+    <div style="clear:both;"></div>
+
+    <div>
+        <h2>Categories</h2>
+
+        <div>
+            {% for item in sub_categories %}
+
+                <div style="float:left">
+                
+                    <a href="{% pageurl item %}">
+                        <picture>
+                            {% image item.specific.image width-400 as wide_photo %}
+                            <source srcset="{{ wide_photo.url }}" media="(min-width: 400px)">
+                            {% image item.specific.image width-400 class="float-left mr-2" %}
+                        </picture>
+                    </a>
+                    
+                    <h2>
+                        <a href="{% pageurl item %}">
+                            {{ item.specific.title }}
+                        </a>
+                    </h2>
+
+                </div>   
+            {% endfor %}
+        </div>
+
+    </div>
 
 {% endblock content %}

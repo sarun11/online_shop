@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load wagtailcore_tags wagtailimages_tags%}
+
+{% block content %}
+
+    <h1>{{ page.title| safe }}</h1>
+
+    <br>
+
+    <picture>
+        {% image page.image width-400 as wide_photo %}
+        <source srcset="{{ wide_photo.url }}" media="(min-width: 400px)">
+        {% image page.image width-400 class="float-left mr-2" %}
+    </picture>
+
+{% endblock content %}

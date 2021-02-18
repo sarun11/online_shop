@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+
+{% block content %}
+
+
+    <div>
+        <h1>
+            {{page.title}}
+        </h1>
+
+        <br>
+
+        
+    </div>  
+
+    <div>
+        {% for sub_category in page.get_children %}
+            {% with collection=sub_category.specific %}
+
+                <div style="float:left">
+                
+                    <a href="{% pageurl collection %}">
+                        <picture>
+                            {% image collection.image width-400 as wide_photo %}
+                            <source srcset="{{ wide_photo.url }}" media="(min-width: 400px)">
+                            {% image collection.image width-400 class="float-left mr-2" %}
+                        </picture>
+                    </a>
+                    
+                    <h2>
+                        <a href="{% pageurl collection %}">
+                            {{ collection.title }}
+                        </a>
+                    </h2>
+
+                </div>
+            {% endwith %}
+            
+        {% endfor %}
+    </div>
+
+{% endblock %}

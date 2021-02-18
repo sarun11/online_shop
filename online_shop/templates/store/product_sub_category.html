@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+
+{% block content %}
+
+    <center>
+        <h1>
+            {{page.title}}
+        </h1>
+
+        <br>
+
+        <!-- <div>
+            {% image page.image width-400 as wide_photo %}
+            <source srcset="{{ wide_photo.url }}" media="(min-width: 400px)">
+            {% image page.image width-400 class="float-left mr-2" %}
+        </div> -->
+    </center>
+
+    <div style="clear:both;"></div>
+
+    <div>
+        {% for productIndex in page.get_children %}
+            {% with productGroup=productIndex.specific %}
+
+                <div style="float:left">
+                
+                    <a href="{% pageurl productGroup %}">
+                        <picture>
+                            {% image productGroup.image width-400 as wide_photo %}
+                            <source srcset="{{ wide_photo.url }}" media="(min-width: 400px)">
+                            {% image productGroup.image width-400 class="float-left mr-2" %}
+                        </picture>
+                    </a>
+                    
+                    <h2>
+                        <a href="{% pageurl productGroup %}">
+                            {{ productGroup.title }}
+                        </a>
+                    </h2>
+
+                </div>
+            {% endwith %}
+            
+        {% endfor %}
+    </div>
+
+    <div style="clear:both;"></div>
+
+    <div>
+        {% for brand in brands %}
+            {% for product in brand.get_children %}
+                {% with item=product.specific %}
+
+                    <div style="float:left">
+                    
+                        <a href="{% pageurl item %}">
+                            <picture>
+                                {% image item.image width-400 as wide_photo %}
+                                <source srcset="{{ wide_photo.url }}" media="(min-width: 400px)">
+                                {% image item.image width-400 class="float-left mr-2" %}
+                            </picture>
+                        </a>
+                        
+                        <h2>
+                            <a href="{% pageurl item %}">
+                                {{ item.title }}
+                            </a>
+                        </h2>
+
+                    </div>
+                {% endwith %}
+            {% endfor%}
+        {% endfor %}
+    </div>
+
+{% endblock %}

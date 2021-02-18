@@ -1,4 +1,5 @@
 from django.db import models
+# from django.core.validators import MaxValueValidator, MinValueValidator 
 from wagtail.core.models import Page, Orderable
 from wagtail.core.fields import RichTextField
 from wagtail.admin.edit_handlers import (
@@ -21,41 +22,100 @@ from cart.forms import CartAddProductForm
 
 # Create your models here.
 
-class StoreIndexPage(Page):
-    intro = RichTextField(
-        null=True, 
-        blank=True,
-        help_text="Enter page title here")
-    
-    content_panels = Page.content_panels + [
-        FieldPanel('intro', classname="full")
-    ]
-    
-    subpage_types = [
-        "store.ProductIndexPage",
-    ]
-    
+class ProductCategoryIndex(Page):
+     
     max_count = 1
     
-    def get_context(self, request, *args, **kwargs):
-        context = super().get_context(request)
-        context["products"] = Product.objects.all()  # later on, may be only featured products will be here
-        return context
+    subpage_types = [
+        "store.ProductCategory"
+    ]
     
-class ProductIndexPage(Page):
     
-    # max_count = 1
+class ProductCategory(Page):
+    
+    # Example: Electronic Devices
+    # Example: Watches and Accessories
+    
+    image = models.ForeignKey(
+        "wagtailimages.Image", 
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="+")
+        
+    content_panels = Page.content_panels + [
+        ImageChooserPanel('image')
+    ]
     
     parent_page_types = [
-        "store.StoreIndexPage"
+        "home.HomePage"
     ]
     
     subpage_types = [
-        "store.Book",    #Change this
+        "store.ProductSubCategory"
+    ]
+       
+class ProductSubCategory(Page):
+    
+    # Example: Mobiles, Laptops
+    # Example: Sunglasses, Eyeglasses
+    
+    image = models.ForeignKey(
+        "wagtailimages.Image", 
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="+")
+        
+    content_panels = Page.content_panels + [
+        ImageChooserPanel('image')
+    ]
+    
+    parent_page_types = [
+        "store.ProductCategory"
+    ]
+    
+    subpage_types = [
+        "store.ProductIndex"
+    ]
+    
+    def get_context(self, request, *args, **kwargs):
+        context = super().get_context(request)            
+        context["brands"] =self.get_children()  # later on, may be only featured products will be here
+        return context
+    
+class ProductIndex(Page):
+    
+    # Example: Samsung Mobiles, Apple iPhones, Mi/Redmi Phones
+    # Example: Gaming Laptops, Macbooks
+    # Example: Men's Sunglasses, Women's Sunglasses
+    # Example: Men's Eyeglasses, Women's Eyeglasses
+    
+    image = models.ForeignKey(
+        "wagtailimages.Image", 
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="+")
+        
+    content_panels = Page.content_panels + [
+        ImageChooserPanel('image')
+    ]
+    
+    parent_page_types = [
+        "store.ProductSubCategory"
+    ]
+    
+    subpage_types = [
+        "store.Book",    # Change this
+        "store.Mobile", 
+        "store.Laptop", 
     ]
     
 
 class Product(Page):
+    
+    # Inherit this class to form individual products
     
     sku = models.IntegerField(null=True)
     name = models.CharField(max_length=250)
@@ -103,8 +163,118 @@ class Product(Page):
         verbose_name_plural = "Products"
     
     subpage_types = []
-        
+    
 
+class Mobile(Product):
+    
+    template = 'store/product.html'
+    
+    MEMORY_CHOICES = [
+        ('2GB', '2GB'),
+        ('3GB', '3GB'),
+        ('4GB', '4GB'),
+        ('6GB', '6GB'),
+        ('8GB', '8GB'),
+        ('12GB', '12GB'),
+        ('16GB', '16GB'),
+        ('32GB', '32GB'),   
+    ]
+    
+    STORAGE_CHOICES = [
+        ('16GB', '16GB'),
+        ('32GB', '32GB'),
+        ('64GB', '64GB'),
+        ('128GB', '128GB'), 
+        ('256GB', '256GB'),
+        ('512GB', '512GB'),
+        ('1TB', '1TB'),
+    ]
+    
+    COLOR_CHOICES = [
+        ('Grey', 'Grey'),
+        ('Black', 'Black'),
+        ('White', 'White'),
+        ('Light Blue', 'Light Blue'),
+    ]
+    
+    color = models.CharField(max_length=25, choices=COLOR_CHOICES, default='Black')
+    memory = models.CharField(max_length=5, choices=MEMORY_CHOICES, default='4GB')
+    storage = models.CharField(max_length=5, choices=STORAGE_CHOICES, default='32GB')
+    
+    stock = models.PositiveIntegerField()
+    
+    content_panels = Product.content_panels + [
+        FieldPanel('color'),
+        FieldPanel('memory'),
+        FieldPanel('storage'),
+        FieldPanel('stock'),
+        
+    ]
+    
+    parent_page_types = [
+        "store.ProductIndex",
+    ]
+    
+    subpage_types = []
+    
+
+class Laptop(Product):
+    template = 'store/product.html'
+    
+    MEMORY_CHOICES = [
+        ('2GB', '2GB'),
+        ('3GB', '3GB'),
+        ('4GB', '4GB'),
+        ('6GB', '6GB'),
+        ('8GB', '8GB'),
+        ('12GB', '12GB'),
+        ('16GB', '16GB'),
+        ('32GB', '32GB'), 
+        ('64GB', '64GB'),
+        ('128GB', '128GB'),
+        ('256GB', '256GB'),  
+    ]
+    
+    SSD_STORAGE_CHOICES = [
+        ('None', 'None'),
+        ('128GB', '128GB'), 
+        ('256GB', '256GB'),
+        ('512GB', '512GB'),
+        ('1TB', '1TB'),
+        ('2TB', '2TB'),
+        ('4TB', '4TB'),
+    ]
+    
+    COLOR_CHOICES = [
+        ('Grey', 'Grey'),
+        ('Black', 'Black'),
+        ('White', 'White'),
+        ('Light Blue', 'Light Blue'),
+    ]
+    
+    color = models.CharField(max_length=25, choices=COLOR_CHOICES, default='Black')
+    memory = models.CharField(max_length=5, choices=MEMORY_CHOICES, default='4GB')
+    hasSSD = models.BooleanField(default=False)
+    ssd_storage = models.CharField(max_length=5, choices=SSD_STORAGE_CHOICES, default='None')
+    
+    stock = models.PositiveIntegerField()
+    
+    content_panels = Product.content_panels + [
+        FieldPanel('color'),
+        FieldPanel('memory'),
+        FieldPanel('hasSSD'),
+        FieldPanel('ssd_storage'),
+        FieldPanel('stock'),
+        
+    ]
+    
+    parent_page_types = [
+        "store.ProductIndex",
+    ]
+    
+    subpage_types = []
+    
+    
 class Book(Product):
     
     template = 'store/product.html'
@@ -118,7 +288,7 @@ class Book(Product):
     ]
     
     parent_page_types = [
-        "store.ProductIndexPage",
+        "store.ProductIndex",
     ]
     
     subpage_types = []
@@ -147,11 +317,11 @@ class BookAuthor(Orderable, models.Model):
         SnippetChooserPanel("author")
     ]
     
+    
 @register_snippet
 class Person(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
-    
     
     panels = [
         FieldPanel('first_name'),
@@ -160,4 +330,5 @@ class Person(models.Model):
     
     def __str__(self):
         return " ".join([self.first_name, self.last_name])
+
 

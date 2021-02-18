@@ -4,11 +4,17 @@ from wagtail.contrib.modeladmin.options import (
     modeladmin_register
 )
 
-from store.models import Product, ProductIndexPage
+from store.models import ( 
+    ProductCategory, 
+    ProductSubCategory,
+    ProductIndex,
+    Mobile,
+    Laptop,
+    Book)
 
 
-class ProductIndexPageAdmin(ModelAdmin):
-    model = ProductIndexPage
+class ProductCategoryAdmin(ModelAdmin):
+    model = ProductCategory
     menu_icon = "pilcrow"
     menu_label = "Product Category"
     menu_order = 100    # 000 refers to first menu order and so on 
@@ -16,20 +22,62 @@ class ProductIndexPageAdmin(ModelAdmin):
     # list_display = ("title")
     # list_filter = ('title')
     # search_fields = ('title')
+    
+    
+class ProductSubCategoryAdmin(ModelAdmin):
+    model = ProductSubCategory
+    menu_icon = "pilcrow"
+    menu_label = "Product Sub-Category"
+    menu_order = 100    # 100 refers to first menu order and so on 
+    list_per_page = 10
+    # list_display = ("title")
+    # list_filter = ('title')
+    # search_fields = ('title')
 
 
-class ProductModelAdmin(ModelAdmin):
-    model = Product
+class ProductIndexModelAdmin(ModelAdmin):
+    model = ProductIndex
     menu_icon = "list-ol"
-    menu_label = "Products"
-    menu_order = 200    # 000 refers to first menu order and so on 
+    menu_label = "Product Index"
+    menu_order = 100    # 000 refers to first menu order and so on 
+    list_per_page = 10
+    # list_display = ("title")
+    # list_filter = ('title')
+    # search_fields = ('title')
+    
+class MobileModelAdmin(ModelAdmin):
+    model = Mobile
+    menu_icon = "list-ol"
+    menu_label = "Mobile"
+    menu_order = 100    # 000 refers to first menu order and so on 
     list_per_page = 10
     list_display = ("title",'price')
     list_filter = ('title', 'price')
     search_fields = ('title', 'price', 'inStock')
     
-modeladmin_register(ProductIndexPageAdmin) 
-modeladmin_register(ProductModelAdmin)
+class LaptopModelAdmin(ModelAdmin):
+    model = Laptop
+    menu_icon = "list-ol"
+    menu_label = "Laptop"
+    menu_order = 100    # 000 refers to first menu order and so on 
+    list_per_page = 10
+    list_display = ("title",'price')
+    list_filter = ('title', 'price')
+    search_fields = ('title', 'price', 'inStock')
+    
+    
+class ElectronicsAdminGroup(ModelAdminGroup):
+    menu_label = "Electronics"
+    menu_icon = 'folder-open-inverse'  # change as required
+    menu_order = 100  # will put in 3rd place (000 being 1st, 100 2nd)
+    items = (MobileModelAdmin, LaptopModelAdmin)
+
+   
+modeladmin_register(ProductCategoryAdmin)
+modeladmin_register(ProductSubCategoryAdmin) 
+modeladmin_register(ProductIndexModelAdmin)
+modeladmin_register(ElectronicsAdminGroup)
+
 
 
 
